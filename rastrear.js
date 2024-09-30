@@ -1,6 +1,8 @@
 if ('geolocation' in navigator) {
     let map = L.map('map').setView([0, 0], 2); // Inicializa o mapa em uma posição padrão
-    let marker = L.marker([0, 0]).addTo(map) // Cria o marcador inicialmente em uma posição padrão
+    let marker = L.marker([0, 0]).addTo(map) // Cria um marcador inicialmente com uma posição padrão
+        .bindPopup("<p>Você está aqui</p>")
+        .openPopup();
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -15,11 +17,19 @@ if ('geolocation' in navigator) {
         map.setView([lat, lon], 20);
 
         // Atualiza a posição do marcador existente
-        marker.setLatLng([lat, lon]).bindPopup("<p>Você está aqui</p>").openPopup();
-        
+        marker.setLatLng([lat, lon]);
+
+        // Criar rota (opcional, se precisar)
+        L.Routing.control({
+            waypoints: [
+                L.latLng(lat, lon),
+                L.latLng(-1.4560646164723035, -48.501267232480984)
+            ]
+        }).addTo(map);
+
     }, function () {
         alert("Não foi possível obter sua localização");
-        map.setView([0, 0], 2);
+        map.setView([0, 0], 19);
     });
 } else {
     alert("Geolocalização não é suportada pelo seu navegador");
