@@ -1,3 +1,15 @@
+        let map = L.map('map').setView([0, 0], 19); // Inicializa o mapa em uma posição padrão
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        let marker = L.marker([0, 0]).addTo(map) // Cria um marcador inicialmente com uma posição padrão
+            .bindPopup("<p>Você está aqui</p>")
+            .openPopup();
+
+        
+
+
 if ('geolocation' in navigator) {
     
 
@@ -5,18 +17,10 @@ if ('geolocation' in navigator) {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
 
-        let map = L.map('map').setView([0, 0], 19); // Inicializa o mapa em uma posição padrão
-        let marker = L.marker([0, 0]).addTo(map) // Cria um marcador inicialmente com uma posição padrão
-            .bindPopup("<p>Você está aqui</p>")
-            .openPopup();
-
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
+        
 
         // Atualiza a vista do mapa para a nova posição
-       // map.setView([lat, lon], 20);
+        map.setView([lat, lon], 20);
 
         // Atualiza a posição do marcador existente
         //marker.setLatLng([lat, lon]);
@@ -63,7 +67,7 @@ if ('geolocation' in navigator) {
 
     }, function () {
         alert("Não foi possível obter sua localização");
-        //map.setView([0, 0], 19);
+        map.setView([0, 0], 19);
     });
 } else {
     alert("Geolocalização não é suportada pelo seu navegador");
