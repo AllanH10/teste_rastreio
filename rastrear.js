@@ -120,10 +120,16 @@ if('geolocation' in navigator){
             ]
 
         }).addTo(map);
-           
-            
 
-
+        setInterval(function () {
+            var newWaypoint = controleRota.getWaypoints()[0].latLng;
+            var newLat = newWaypoint.lat;
+            var newLng = newWaypoint.lon;
+            controleRota.setWaypoints([
+               L.latLng(newLat, newLng),
+               controleRota.options.waypoints[1]
+             ]);
+        }, 10000);
         
         let marker = L.marker([lat, lon]).addTo(map) // Cria um marcador inicialmente com uma posição padrão
             .bindPopup("<p>Você está aqui</p>")
