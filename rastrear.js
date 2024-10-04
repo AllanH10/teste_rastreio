@@ -1,16 +1,16 @@
-        let map = L.map('map').setView([0, 0], 19); // Inicializa o mapa em uma posição padrão
+       /* let map = L.map('map').setView([0, 0], 19); // Inicializa o mapa em uma posição padrão
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
         let marker = L.marker([0, 0]).addTo(map) // Cria um marcador inicialmente com uma posição padrão
             .bindPopup("<p>Você está aqui</p>")
-            .openPopup();
+            .openPopup();*/
 
         
 
 
-if ('geolocation' in navigator) {
+/*if ('geolocation' in navigator) {
     
 
     navigator.geolocation.watchPosition(function (pos) {
@@ -31,7 +31,7 @@ if ('geolocation' in navigator) {
                 L.latLng(lat, lon),
                 L.latLng(-1.4560646164723035, -48.501267232480984)
             ]
-        }).addTo(map);
+        }).addTo(map);*/
 
         /*L.Routing.control({
             waypoints: [
@@ -53,7 +53,7 @@ if ('geolocation' in navigator) {
         ];
         }, 10000);*/
 
-        setInterval(function () {
+ /*       setInterval(function () {
             var newWaypoint = controleRota.getWaypoints()[0].latLng;
             var newLat = newWaypoint.lat;
             var newLng = newWaypoint.lng;
@@ -71,7 +71,7 @@ if ('geolocation' in navigator) {
     });
 } else {
     alert("Geolocalização não é suportada pelo seu navegador");
-}
+}*/
 
 
 /*routingControl = L.Routing.control({
@@ -86,5 +86,62 @@ if ('geolocation' in navigator) {
     fitSelectedRoutes: true,
     addWaypoints: false*/
 //}).addTo(OSM_Map);//
+
+/*let map = L.map('map').setView([0, 0], 19); // Inicializa o mapa em uma posição padrão
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    let marker = L.marker([0, 0]).addTo(map) // Cria um marcador inicialmente com uma posição padrão
+        .bindPopup("<p>Você está aqui</p>")
+        .openPopup();*/
+
+
+if('geolocation' in navigator){
+
+   
+
+    var watchID = navigator.geolocation.watchPosition(function(position){
+        //do_something(position.coords.latitude, position.coords.longitude);
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+
+        let map = L.map('map').setView([0,0], 19);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        controleRota = L.Routing.control({
+            waypoints:[
+                L.latLng(lat, lon),
+                L.latLng(-1.4560646164723035, -48.501267232480984)
+            ]
+
+        }).addTo(map);
+           
+            
+
+
+        
+        let marker = L.marker([lat, lon]).addTo(map) // Cria um marcador inicialmente com uma posição padrão
+            .bindPopup("<p>Você está aqui</p>")
+            .openPopup();
+
+    }, function() {
+        let map = L.map('map').setView([0, 0], 19); // Inicializa o mapa em uma posição padrão
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        let marker = L.marker([-1.4636558451642132, -48.505248617139024]).addTo(map) // Cria um marcador inicialmente com uma posição padrão
+            .bindPopup("<p>Mangal das Garças</p>")
+            .openPopup();
+        
+    } )
+
+}
 
 
