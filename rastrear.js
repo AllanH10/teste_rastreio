@@ -119,17 +119,14 @@ if('geolocation' in navigator){
                 L.latLng(-1.4560646164723035, -48.501267232480984)
             ]
 
-        }).addTo(map);
-
-        setInterval(function () {
-            var newWaypoint = controleRota.getWaypoints()[0].latLng;
-            var newLat = newWaypoint.lat;
-            var newLng = newWaypoint.lon;
-            controleRota.setWaypoints([
-               L.latLng(newLat, newLng),
-               controleRota.options.waypoints[1]
-             ]);
-        }, 10000);
+        }).on('routesfound',function(e){
+            e.routes[0].coordinates.forEach(function(coord, index){
+                setTimeout(function(){
+                    marker.setLatLng([coord.lat,coord.lon])
+                },100 * index)
+            })
+        }).addTo(map)
+        
         
         let marker = L.marker([lat, lon]).addTo(map) // Cria um marcador inicialmente com uma posição padrão
             .bindPopup("<p>Você está aqui</p>")
