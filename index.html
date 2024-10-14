@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -24,4 +24,192 @@
         
         <script src="rastrear.js"></script>
 </body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa com Rotas</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <style>
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+
+<script>
+
+    var map;
+    var userMarker;
+    var destinationMarker;
+    var routeControl;
+
+    // Função para inicializar o mapa na posição do usuário
+
+    function initMap(latitude, longitude) {
+
+        if (!map) {
+
+            map = L.map('map').setView([latitude, longitude], 15);
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+            maxZoom: 19,
+
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+
+            }).addTo(map);
+
+        
+            // Evento de clique no mapa para definir o destino
+
+            map.on('click', function (e) {
+
+                var destLat = e.latlng.lat;
+
+                var destLon = e.latlng.lng;
+
+            
+                // Remover marcador de destino anterior, se existir
+
+                if (destinationMarker) {
+
+                    map.removeLayer(destinationMarker);
+
+                }
+
+                // Adicionar um marcador no local clicado e permitir que ele seja arrastado
+
+                destinationMarker = L.marker([destLat, destLon], { draggable: true }).addTo(map);
+
+                destinationMarker.bindPopup("<p>Destino escolhido</p>").openPopup();
+
+
+                // Traçar rota quando o marcador de destino é movido
+
+                destinationMarker.on('dragend', function (event) {
+
+                    var newPos = event.target.getLatLng();
+
+                    traceRoute(userMarker.getLatLng().lat, userMarker.getLatLng().lng, newPos.lat, newPos.lng);
+
+                });
+
+            
+
+                // Obter a localização atual do usuário para traçar a rota
+
+                traceRoute(userMarker.getLatLng().lat, userMarker.getLatLng().lng, destLat, destLon);
+
+            });
+
+        } else {
+
+            map.setView([latitude, longitude], 15);
+
+        }
+
+        // Adicionar marcador na posição do usuário e permitir arrastar
+
+        if (userMarker) {
+
+            map.removeLayer(userMarker);
+
+        }
+
+        userMarker = L.marker([latitude, longitude], { draggable: true }).addTo(map);
+
+        userMarker.bindPopup("<p>Você está aqui</p>").openPopup();
+        
+        // Atualizar a rota ao arrastar o marcador do usuário
+
+        userMarker.on('dragend', function (event) {
+
+            var newPos = event.target.getLatLng();
+
+            if (destinationMarker) {
+
+            traceRoute(newPos.lat, newPos.lng, destinationMarker.getLatLng().lat, destinationMarker.getLatLng().lng);
+
+            }
+
+        });
+
+    }
+
+    
+
+    // Função para traçar rota entre a posição do usuário e o destino
+
+    function traceRoute(userLat, userLon, destLat, destLon) {
+
+        // Se já houver uma rota, remover antes de criar a nova
+
+        if (routeControl) {
+
+        map.removeControl(routeControl);
+
+        }
+
+        // Criar e adicionar rota ao mapa
+
+        routeControl = L.Routing.control({
+
+            waypoints: [
+
+            L.latLng(userLat, userLon),
+
+            L.latLng(destLat, destLon)
+
+            ],
+
+            routeWhileDragging: true, // Permitir ajustar a rota enquanto os marcadores são arrastados
+
+            createMarker: function() { return null; } // Não criar novos marcadores durante o cálculo da rota
+
+        }).addTo(map);
+
+    }
+
+    
+
+    // Obter a localização do usuário
+
+    if ('geolocation' in navigator) {
+
+        navigator.geolocation.getCurrentPosition(function (pos) {
+
+            initMap(pos.coords.latitude, pos.coords.longitude);
+
+        }, function () {
+
+            alert("Não foi possível obter sua localização");
+
+            initMap(0, 0); // Centraliza o mapa em uma posição neutra se a localização falhar
+
+        });
+
+    } else {
+
+        alert("Geolocalização não é suportada pelo seu navegador");
+
+    }
+
+    
+
+</script>
+
+</body>
+
 </html>

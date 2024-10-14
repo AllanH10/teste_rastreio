@@ -106,7 +106,7 @@ if('geolocation' in navigator){
         var lat = position.coords.latitude;
         var lon = position.coords.longitude;
 
-        let map = L.map('map').setView([0,0], 19);
+        let map = L.map('map').setView([lat,lon], 19);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -119,13 +119,17 @@ if('geolocation' in navigator){
                 L.latLng(-1.4560646164723035, -48.501267232480984)
             ]
 
-        }).on('routesfound',function(e){
-            e.routes[0].coordinates.forEach(function(coord, index){
-                setTimeout(function(){
-                    marker.setLatLng([coord.lat,coord.lon])
-                },100 * index)
-            })
         }).addTo(map)
+
+            setInterval(function () {
+                var newWaypoint = controleRota.getWaypoints()[0].latLng;
+                var newLat = newWaypoint.lat;
+                var newLng = newWaypoint.lon;
+                controleRota.setWaypoints([
+                   L.latLng(newLat, newLng),
+                   controleRota.options.waypoints[1]
+                 ]);
+            }, 10000);
         
         
         let marker = L.marker([lat, lon]).addTo(map) // Cria um marcador inicialmente com uma posição padrão
@@ -146,5 +150,15 @@ if('geolocation' in navigator){
     } )
 
 }
+
+/*.on('routesfound',function(e){
+    console.log(e)
+    e.routes[0].coordinates.forEach(function(coord, index){
+        setTimeout(function(){
+            marker.setLatLng([coord.lat,coord.lng])
+            
+        },1000 * index)
+    })
+})*/
 
 
