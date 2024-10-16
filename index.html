@@ -8,19 +8,22 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
         }
 
         #map {
-            height: 400px;
+            height: calc(100% - 50px); /* Ocupar toda a altura menos a altura do botão */
             width: 100%;
         }
 
         #clearRoute {
-            margin: 10px;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
             padding: 10px 15px;
             font-size: 16px;
             background-color: #007BFF;
@@ -28,6 +31,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            z-index: 1000; /* Para que fique acima do mapa */
         }
 
         #clearRoute:hover {
