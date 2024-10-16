@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <!-- Evitar zoom -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Mapa com Rotas</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -17,7 +17,7 @@
         }
 
         #map {
-            height: calc(100% - 50px); /* Ocupar toda a altura menos a altura do botão */
+            height: calc(100% - 50px);
             width: 100%;
         }
 
@@ -54,12 +54,14 @@
         var userMarker;
         var destinationMarker;
         var routeControl;
+        var lastLatitude = null;
+        var lastLongitude = null;
 
         // Função para inicializar o mapa
         function initMap(latitude, longitude) {
             if (!map) {
                 map = L.map('map', {
-                    gestureHandling: true // Permitir manipulação por gestos
+                    gestureHandling: true
                 }).setView([latitude, longitude], 15);
 
                 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -69,19 +71,22 @@
 
                 // Evento de clique no mapa para definir o destino
                 map.on('click', function (e) {
-                    setDestinationMarker(e.latlng.lat, e.latlng.lng);
+                    if (!destinationMarker) {
+                        setDestinationMarker(e.latlng.lat, e.latlng.lng);
+                    }
                 });
             } else {
-                map.setView([latitude, longitude], 15);
+                // Suaviza a mudança de posição
+                map.setView([latitude, longitude], 15, { animate: true });
             }
 
             // Adicionar marcador do usuário
             if (userMarker) {
-                map.removeLayer(userMarker);
+                userMarker.setLatLng([latitude, longitude]); // Move o marcador em vez de recriá-lo
+            } else {
+                userMarker = L.marker([latitude, longitude], { draggable: true }).addTo(map);
+                userMarker.bindPopup("<p>Você está aqui</p>").openPopup();
             }
-
-            userMarker = L.marker([latitude, longitude], { draggable: true }).addTo(map);
-            userMarker.bindPopup("<p>Você está aqui</p>").openPopup();
 
             // Atualizar rota ao arrastar o marcador do usuário
             userMarker.on('dragend', function (event) {
@@ -159,20 +164,29 @@
         }
 
         // Adicionar evento de clique ao botão de limpar rota
-        document.getElementById('clearRoute').addEventListener('click', clearRoute);
+        document.getElementById('clearRoute').addEventListener('click', function(event) {
+            event.preventDefault(); // Impedir comportamento padrão
+            clearRoute();
+        });
 
         // Atualizar posição do usuário em tempo real
         if ('geolocation' in navigator) {
             navigator.geolocation.watchPosition(function (pos) {
                 var latitude = pos.coords.latitude;
                 var longitude = pos.coords.longitude;
-                initMap(latitude, longitude);
+
+                // Atualizar apenas se a posição mudou significativamente
+                if (lastLatitude !== latitude || lastLongitude !== longitude) {
+                    lastLatitude = latitude;
+                    lastLongitude = longitude;
+                    initMap(latitude, longitude);
+                }
             }, function () {
                 alert("Não foi possível obter sua localização");
                 initMap(0, 0);
             });
         } else {
-            alert("Geolocalização não é suportada pelo seu navegador");
+            alert("Geolocalização não é suportada pelo seu navegador"); l
         }
     </script>
 
