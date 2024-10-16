@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <!-- Evitar zoom -->
     <title>Mapa com Rotas</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
@@ -13,6 +13,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
+            touch-action: pan-x pan-y; /* Impedir zoom ao tocar */
         }
 
         #map {
@@ -57,7 +58,9 @@
         // Função para inicializar o mapa
         function initMap(latitude, longitude) {
             if (!map) {
-                map = L.map('map').setView([latitude, longitude], 15);
+                map = L.map('map', {
+                    gestureHandling: true // Permitir manipulação por gestos
+                }).setView([latitude, longitude], 15);
 
                 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
